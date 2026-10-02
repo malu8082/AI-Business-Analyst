@@ -373,4 +373,88 @@ st.info(
     "manual processing, and fulfillment steps to "
     "identify the underlying cause."
 )
+# ---------------------------------------------------
+# AI BUSINESS ANALYST - GEMINI
+# ---------------------------------------------------
 
+st.header("🤖 AI Business Analyst")
+
+st.write(
+    "Use Gemini AI to analyze the business performance "
+    "and generate practical business recommendations."
+)
+
+if st.button("🔍 Generate AI Business Analysis"):
+
+    try:
+        from google import genai
+        import os
+
+        # Get Gemini API key from Streamlit Secrets
+        api_key = st.secrets["GEMINI_API_KEY"]
+
+        client = genai.Client(api_key=api_key)
+
+        # Prepare business information for Gemini
+        business_summary = f"""
+You are an experienced Business Analyst.
+
+Analyze the following business performance information.
+
+Highest revenue region:
+{best_region}
+
+Highest revenue product:
+{best_product}
+
+Lowest revenue region:
+{worst_region}
+
+Highest processing-time region:
+{worst_processing_region}
+
+Highest processing-time product:
+{worst_processing_product}
+
+Region with most delayed orders:
+{worst_delay_region}
+
+Highest regional processing time:
+{worst_processing_time:.1f} hours
+
+Highest product processing time:
+{worst_product_processing_time:.1f} hours
+
+Overall average processing time:
+{average_processing_time:.1f} hours
+
+Provide a professional business analysis with these sections:
+
+1. Executive Summary
+2. Key Business Findings
+3. Possible Root Causes
+4. Business Risks
+5. Recommended Actions
+6. Expected Business Impact
+
+Keep the analysis practical and suitable for a business analyst report.
+Do not invent facts that are not supported by the data.
+"""
+
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=business_summary
+        )
+
+        st.subheader("📊 AI-Generated Business Analysis")
+
+        st.write(response.text)
+
+    except Exception as e:
+
+        st.error(
+            "Unable to generate AI analysis. "
+            "Please check your Gemini API key and Streamlit Secrets."
+        )
+
+        st.code(str(e))
